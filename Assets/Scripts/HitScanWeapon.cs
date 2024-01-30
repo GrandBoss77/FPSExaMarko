@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class HitScanWeapon : Weapon
 {
+    public int weaponDamage = 20;
     public ParticleSystem HitParticle = null;
     public ParticleSystem MuzzleFlash = null;
+    public AudioClip shootSound = null;
 
     protected new void Start()
     {
@@ -18,7 +20,6 @@ public class HitScanWeapon : Weapon
         {
             return false;
         }
-        Debug.Log("");
         HitScanFire();
 
         return true;
@@ -26,6 +27,7 @@ public class HitScanWeapon : Weapon
 
     private void HitScanFire()
     {
+        SoundManager.PlaySound(shootSound, transform.position);
         MuzzleFlash.Play();
    
         Ray weaponRay = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
@@ -40,18 +42,22 @@ public class HitScanWeapon : Weapon
             HitParticle.transform.forward = hit.normal;
             HitParticle.transform.Translate(hit.normal.normalized * 0.1f);
        
-
             HandleEntityHit(hit);
         }
     }
 
-    private static void HandleEntityHit(RaycastHit hit)
+    private void HandleEntityHit(RaycastHit hit)
     {
-        var PlayerHit = hit.transform.gameObject.GetComponent<PlayerMovement>();
-        if (PlayerHit != null)
+        if (hit.collider)
         {
-            //DOHitStuff()
+            Transform parentTransform = hit.collider.transform.parent;
+            if (parentTransform != null)
+            {
+                if (parentTransform.TryGetComponent<Enemy>(out var enemy))
+                {
+                    enemy.TakeDamage(weaponDamage);
+                }
+            }
         }
     }
-
 }

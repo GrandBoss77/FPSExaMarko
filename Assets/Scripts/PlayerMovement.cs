@@ -1,13 +1,17 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class PlayerMovement : Agent
 {
     public CharacterController characterController;
+    public Image damagedIndicator;
 
-    public float speed = 12.0f;
+    public float health = 100f;
+    public float speed = 12f;
     public float gravity = -9.81f;
-    public float jumpHight = 5.0f;
+    public float jumpHight = 5f;
 
     public Transform Groundcheck = null;
     public float GroundDistance = 0.4f;
@@ -31,6 +35,18 @@ public class PlayerMovement : Agent
 
         velocity.y += gravity * Time.deltaTime;
         characterController.Move(velocity * Time.deltaTime);
+    }
+
+    public void TakeDamage(float damage)
+    {
+        Debug.Log("WEARE");
+        health -= damage;
+        //damagedIndicator.color.a = damage;
+        if (health < 0)
+        {
+            string currentSceneName = SceneManager.GetActiveScene().name;
+            SceneManager.LoadScene(currentSceneName);
+        }
     }
 
 

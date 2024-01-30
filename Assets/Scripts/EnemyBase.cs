@@ -1,52 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class EnemyBase : Agent
 {
-    public PlayerMovement activePlayer = null;
-    public float detectionRange = 10.0f;
-    bool moveTowardTarget = false;
-    // Start is called before the first frame update
-    void Start()
+    public NavMeshAgent meshAgent;
+    public float health = 100;
+
+
+
+
+
+    public void TakeDamage(int damage)
     {
-        
-    }
+        health -= damage;
 
-    // Update is called once per frame
-    void Update()
+        if (health <= 0) Invoke(nameof(DestroyEnemy), 0.5f);
+    }
+    private void DestroyEnemy()
     {
-        
+        Destroy(gameObject);
     }
-
-    public void HandleDetectTarget()
-    {
-        RaycastHit hit;
-
-        if(Physics.Raycast(new Ray(transform.position, (activePlayer.transform.position - transform.position).normalized), out hit, detectionRange))
-        {
-            var playerMovement = hit.transform.gameObject.GetComponent<PlayerMovement>();
-            if(playerMovement != null)
-            {
-                OnTargetDetected();
-            }
-        }
-    }
-
-    public void OnTargetDetected()
-    {
-
-    }
-
-    public void HandleFollowTarget()
-    {
-
-    }
-
-    public void TryHandleEngaged()
-    {
-
-    }
-
-
 }
